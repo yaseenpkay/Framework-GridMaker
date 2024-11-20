@@ -197,8 +197,12 @@ const GridMaker: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  const isDimensionsValid =
+    dimensions.width > 0 && dimensions.height > 0 && dimensions.cellSize > 0;
+
   return (
     <div className="space-y-6">
+      {/* Dimensions Inputs */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
           <label htmlFor="width" className="block font-medium">
@@ -227,7 +231,7 @@ const GridMaker: React.FC = () => {
             value={dimensions.height || ""}
             onChange={handleDimensionChange}
             placeholder="Enter height"
-            className="border border-gray-300 rounded-md px-3 py-2 w-full  text-black"
+            className="border border-gray-300 rounded-md px-3 py-2 w-full text-black"
           />
         </div>
         <div className="space-y-2">
@@ -242,11 +246,12 @@ const GridMaker: React.FC = () => {
             value={dimensions.cellSize || ""}
             onChange={handleDimensionChange}
             placeholder="Enter cell size"
-            className="border border-gray-300 rounded-md px-3 py-2 w-full  text-black"
+            className="border border-gray-300 rounded-md px-3 py-2 w-full text-black"
           />
         </div>
       </div>
 
+      {/* Image Upload Input */}
       <div className="space-y-2">
         <label htmlFor="image" className="block font-medium">
           Upload Image
@@ -256,8 +261,16 @@ const GridMaker: React.FC = () => {
           type="file"
           accept="image/*"
           onChange={handleImageUpload}
-          className="border border-gray-300 rounded-md px-3 py-2 w-full"
+          className={`border border-gray-300 rounded-md px-3 py-2 w-full ${
+            isDimensionsValid ? "" : "cursor-not-allowed opacity-50"
+          }`}
+          disabled={!isDimensionsValid}
         />
+        {!isDimensionsValid && (
+          <p className="text-sm text-">
+            Please set valid dimensions before uploading an image.
+          </p>
+        )}
       </div>
 
       <div className="h-[500px] border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center">
@@ -273,7 +286,6 @@ const GridMaker: React.FC = () => {
         )}
       </div>
 
-      {/* Grid customization */}
       {/* Grid customization */}
       <div className="flex space-x-4">
         <div className="flex items-center space-x-2">
