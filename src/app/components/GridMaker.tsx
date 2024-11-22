@@ -29,7 +29,7 @@ const PREDEFINED_SIZES = {
 } as const;
 
 const GridMaker: React.FC = () => {
-  const [canvasType, setCanvasType] = useState<"predefined" | "custom">(
+  const [canvasType, _setCanvasType] = useState<"predefined" | "custom">(
     "custom"
   );
 

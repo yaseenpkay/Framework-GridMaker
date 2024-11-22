@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import GridMaker from "@/app/components/GridMaker";
 
 export default function Home() {
