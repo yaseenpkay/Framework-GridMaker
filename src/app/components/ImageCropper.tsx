@@ -128,12 +128,12 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4 sm:p-8 m-0">
-      <div className="bg-gray-800 text-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col sm:grid sm:grid-cols-2">
+    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4 sm:p-8 !m-0">
+      <div className="bg-gray-800 text-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col  sm:grid sm:grid-cols-2">
         {/* Preview Section */}
         <div className="flex flex-col items-center p-6 space-y-4 border-b sm:border-b-0 sm:border-r border-gray-700">
           <h3 className="text-xl font-bold text-blue-400">Preview</h3>
-          <div className="relative w-full h-[300px] sm:h-[400px] overflow-hidden rounded-lg border border-gray-600">
+          <div className="relative w-full h-[30vh] sm:h-[400px] overflow-hidden rounded-lg border border-gray-600">
             <Cropper
               src={filteredImage}
               style={{ height: "100%", width: "100%" }}
@@ -146,8 +146,8 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
         </div>
 
         {/* Adjustments Section */}
-        <div className="p-6 space-y-8 overflow-y-auto max-h-[500px] sm:max-h-[90vh]">
-          <h3 className="text-xl font-bold text-blue-400 sticky top-0 bg-gray-800 z-10 pb-2">
+        <div className="pt-5 px-5 pb-3 space-y-8 overflow-y-auto max-h-[500px] sm:max-h-[90vh]">
+          <h3 className="text-xl font-bold text-blue-400  bg-gray-800 z-10 pb-2">
             Adjustments
           </h3>
 
@@ -158,9 +158,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
             { label: "Contrast", value: contrast, setValue: setContrast },
           ].map(({ label, value, setValue }, idx) => (
             <div key={idx}>
-              <label className="block mb-2 text-gray-300 font-medium">
-                {label}
-              </label>
+              <label className=" text-gray-300 font-medium">{label}</label>
               <input
                 type="range"
                 min={0}
@@ -179,12 +177,6 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
             </label>
             <div className="flex flex-wrap gap-4">
               <button
-                onClick={() => setFlipHorizontal(!flipHorizontal)}
-                className="flex-1 py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all"
-              >
-                Flip Horizontal
-              </button>
-              <button
                 onClick={() => setRotation((prev) => (prev - 90 + 360) % 360)}
                 className="flex-1 py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all"
               >
@@ -196,20 +188,26 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
               >
                 Rotate ⟳
               </button>
+              <button
+                onClick={() => setFlipHorizontal(!flipHorizontal)}
+                className="flex-1 py-2 px-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all"
+              >
+                Flip Horizontal
+              </button>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-between mt-6 space-x-4 sticky bottom-0 bg-gray-800 pt-4">
+          <div className="flex justify-between mt-6 space-x-4 sticky bottom-0 bg-gray-800 pt-2">
             <button
               onClick={onClose}
-              className="flex-1 py-3 px-5 bg-red-600 hover:bg-red-500 rounded-lg transition-all font-medium"
+              className="flex-1 py-2 px-5 bg-red-600 hover:bg-red-500 rounded-lg transition-all font-medium"
             >
               Cancel
             </button>
             <button
               onClick={getCroppedImage}
-              className="flex-1 py-3 px-5 bg-blue-600 hover:bg-blue-500 rounded-lg transition-all font-medium"
+              className="flex-1 py-2 px-5 bg-blue-600 hover:bg-blue-500 rounded-lg transition-all font-medium"
             >
               Save Crop
             </button>

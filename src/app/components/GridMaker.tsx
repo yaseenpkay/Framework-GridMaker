@@ -366,7 +366,7 @@ const GridMaker: React.FC = () => {
         )}
       </div>
 
-      <div className="h-[500px] border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center space-y-4">
+      <div className="h-[30vh] sm:h-[500px] border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center space-y-4">
         {imageFile ? (
           <div className="w-full h-full flex items-center justify-center">
             <canvas
@@ -439,20 +439,11 @@ const GridMaker: React.FC = () => {
           >
             Save
             {/* Download Icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
+            <img
+              src="https://img.icons8.com/?size=100&id=1o4BrawNfLIv&format=png&color=000000"
+              alt="Download"
               className="w-5 h-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 16V4m0 12l-4-4m4 4l4-4m-6 6h8"
-              />
-            </svg>
+            />
           </button>
         )}
       </div>
