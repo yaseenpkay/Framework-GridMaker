@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import ImageCropper from "@/app/components/ImageCropper"; // Adjust the path based on your folder structure
-import ImageEditor from "./ImageEditor";
+import { motion, AnimatePresence } from "framer-motion"; // Optional, but recommended for smooth transitions
 
 interface Dimensions {
   width: number;
@@ -18,57 +18,51 @@ interface GridLabelOptions {
   backgroundColor: string;
 }
 
-// Usage in drawing code:
-const labelOptions: GridLabelOptions = {
-  fontSize: 20,
-  color: "black",
-  padding: 5,
-  showBackground: true,
-  backgroundColor: "rgba(255, 255, 255, 0.7)",
-};
+// Predefined canvas sizes in mm
+
+const PREDEFINED_SIZES = {
+  A1: { width: 841, height: 594 },
+  A2: { width: 594, height: 420 },
+  A3: { width: 420, height: 297 },
+  A4: { width: 297, height: 210 },
+  A5: { width: 210, height: 148 },
+} as const;
 
 const GridMaker: React.FC = () => {
+  const [canvasType, setCanvasType] = useState<"predefined" | "custom">(
+    "custom"
+  );
+
   const [dimensions, setDimensions] = useState<Dimensions>({
     width: 0,
     height: 0,
     cellSize: 0,
   });
+  type SizeOption = keyof typeof PREDEFINED_SIZES | "custom";
 
+  const [sizeOption, setSizeOption] = useState<SizeOption>("A4");
+  const [orientation, setOrientation] = useState<"portrait" | "landscape">(
+    "portrait"
+  );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
-  const [gridColor, setGridColor] = useState("#000000"); // Default grid color
+  const [gridColor, setGridColor] = useState("#ffffff"); // Default grid color
   const [showGridLabels, setShowGridLabels] = useState(true); // Show grid labels toggle
   const [showDiagonalLines, setShowDiagonalLines] = useState(false); // Show diagonal lines toggle
   const [showCropModal, setShowCropModal] = useState(false); // Show cropping modal
   const [croppedImageUrl, setCroppedImageUrl] = useState<string>("");
 
+  const labelOptions: GridLabelOptions = {
+    fontSize: 20,
+    color: gridColor,
+    padding: 5,
+    showBackground: true,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+  };
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
 
-  // Handle input changes for dimensions
-  const handleDimensionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setDimensions((prev) => ({
-      ...prev,
-      [name]: parseFloat(value) || 0,
-    }));
-  };
-
-  // Handle image file upload
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageUrl(reader.result as string);
-        setShowCropModal(true); // Show crop modal after image upload
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Draw the grid and image on the canvas
+  // Update dimensions when switching between predefined/custom or changing selections
   useEffect(() => {
     if (
       !canvasRef.current ||
@@ -83,54 +77,56 @@ const GridMaker: React.FC = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    if (!ctx) {
-      return;
-    }
+    if (!ctx) return;
 
-    // Set the canvas size based on the physical dimensions
-    const scale = 2; // 2 pixels per mm for display
+    const scale = 2; // Pixels per mm for display
     canvas.width = dimensions.width * scale;
     canvas.height = dimensions.height * scale;
 
-    // Draw the cropped image on the canvas
+    // Create an Image object and load the cropped image
     const image = new Image();
     image.src = croppedImageUrl;
+
     image.onload = () => {
       const imageAspectRatio = image.width / image.height;
       const canvasAspectRatio = dimensions.width / dimensions.height;
       let imgWidth = dimensions.width * scale;
       let imgHeight = dimensions.height * scale;
 
-      // Adjust image size based on the aspect ratio
+      // Adjust image size to fit within canvas dimensions
       if (imageAspectRatio > canvasAspectRatio) {
         imgHeight = imgWidth / imageAspectRatio;
       } else {
         imgWidth = imgHeight * imageAspectRatio;
       }
 
-      // Center image on canvas
+      // Center the image on the canvas
       const offsetX = (canvas.width - imgWidth) / 2;
       const offsetY = (canvas.height - imgHeight) / 2;
 
+      // Draw the image on the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(image, offsetX, offsetY, imgWidth, imgHeight);
 
       // Draw the grid on top of the image
       ctx.beginPath();
       ctx.strokeStyle = gridColor;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 1;
 
+      // Draw vertical lines
       // Draw vertical lines
       for (let x = 0; x <= canvas.width; x += dimensions.cellSize * scale) {
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
 
+        // Optionally, draw labels for the first row
         if (showGridLabels) {
-          ctx.font = `${labelOptions.fontSize}px`;
+          ctx.font = `${labelOptions.fontSize}px Arial`;
           ctx.fillStyle = labelOptions.color;
           ctx.fillText(
-            `${Math.round(x / scale / dimensions.cellSize)}`,
-            x + 5,
-            15
+            `${Math.round(x / scale / dimensions.cellSize) + 1}`,
+            x + labelOptions.padding,
+            labelOptions.fontSize + labelOptions.padding
           );
         }
       }
@@ -140,21 +136,19 @@ const GridMaker: React.FC = () => {
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
 
+        // Optionally, draw labels for the first column
         if (showGridLabels) {
-          ctx.font = `${labelOptions.fontSize}px`;
+          ctx.font = `${labelOptions.fontSize}px Arial`;
           ctx.fillStyle = labelOptions.color;
           ctx.fillText(
-            `${Math.round(y / scale / dimensions.cellSize)}`,
-            5,
-            y + 15
+            `${Math.round(y / scale / dimensions.cellSize) + 1}`,
+            labelOptions.padding,
+            y + labelOptions.fontSize + labelOptions.padding
           );
         }
       }
-
       // Draw diagonal lines if enabled
       if (showDiagonalLines) {
-        ctx.font = `${labelOptions.fontSize}px`;
-        ctx.fillStyle = labelOptions.color;
         for (let x = 0; x <= canvas.width; x += dimensions.cellSize * scale) {
           for (
             let y = 0;
@@ -182,19 +176,50 @@ const GridMaker: React.FC = () => {
     showDiagonalLines,
   ]);
 
-  // Crop the image based on the selected region
+  useEffect(() => {
+    if (sizeOption !== "custom") {
+      const baseSize = PREDEFINED_SIZES[sizeOption];
+
+      const width =
+        orientation === "landscape" ? baseSize.height : baseSize.width;
+      const height =
+        orientation === "landscape" ? baseSize.width : baseSize.height;
+
+      setDimensions((prev) => ({
+        ...prev,
+        width,
+        height,
+        cellSize: 0, // Default cell size
+      }));
+    }
+  }, [sizeOption, orientation]);
+
+  const handleDimensionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const parsedValue = parseFloat(value);
+    if (parsedValue < 0) return; // Prevent negative values
+    setDimensions((prev) => ({
+      ...prev,
+      [name]: parsedValue || 0,
+    }));
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+        setShowCropModal(true);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleImageCrop = (croppedDataUrl: string) => {
     setCroppedImageUrl(croppedDataUrl);
-    setShowCropModal(false); // Close crop modal after cropping
-
-    const link = document.createElement("a");
-    link.href = croppedDataUrl;
-    link.download = "cropped-image.png"; // Set desired filename
-
-    // Trigger download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    setShowCropModal(false);
   };
 
   const isDimensionsValid =
@@ -202,53 +227,119 @@ const GridMaker: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Dimensions Inputs */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="width" className="block font-medium">
-            Canvas Width (mm)
-          </label>
-          <input
-            id="width"
-            name="width"
-            type="number"
-            min="0"
-            value={dimensions.width || ""}
-            onChange={handleDimensionChange}
-            placeholder="Enter width"
-            className="border border-gray-300 rounded-md px-3 py-2 w-full text-black"
-          />
-        </div>
-        <div className="space-y-2">
-          <label htmlFor="height" className="block font-medium">
-            Canvas Height (mm)
-          </label>
-          <input
-            id="height"
-            name="height"
-            type="number"
-            min="0"
-            value={dimensions.height || ""}
-            onChange={handleDimensionChange}
-            placeholder="Enter height"
-            className="border border-gray-300 rounded-md px-3 py-2 w-full text-black"
-          />
-        </div>
-        <div className="space-y-2">
-          <label htmlFor="cellSize" className="block font-medium">
-            Grid Cell Size (mm)
-          </label>
-          <input
-            id="cellSize"
-            name="cellSize"
-            type="number"
-            min="0"
-            value={dimensions.cellSize || ""}
-            onChange={handleDimensionChange}
-            placeholder="Enter cell size"
-            className="border border-gray-300 rounded-md px-3 py-2 w-full text-black"
-          />
-        </div>
+      {/* Canvas Type Selection */}
+      <div className="space-y-4  border-2 border-dashed border-gray-200 rounded-lg p-5">
+        <fieldset>
+          <legend className="text-lg font-semibold mb-4">
+            Select Canvas Size
+          </legend>
+
+          {/* Size Options */}
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            {([...Object.keys(PREDEFINED_SIZES), "custom"] as const).map(
+              (size) => (
+                <div key={size} className="flex items-center">
+                  <input
+                    type="radio"
+                    id={`size-${size}`}
+                    name="size"
+                    value={size}
+                    checked={sizeOption === size}
+                    onChange={() => setSizeOption(size as SizeOption)}
+                    className="mr-2"
+                    aria-describedby={`size-${size}-desc`}
+                  />
+                  <label htmlFor={`size-${size}`} className="capitalize">
+                    {size === "custom" ? "Custom" : size}
+                  </label>
+                </div>
+              )
+            )}
+          </div>
+
+          {/* Orientation Options */}
+          <div className="flex space-x-4">
+            {(["portrait", "landscape"] as const).map((orient) => (
+              <div key={orient} className="flex items-center">
+                <input
+                  type="radio"
+                  id={`orientation-${orient}`}
+                  name="orientation"
+                  value={orient}
+                  checked={orientation === orient}
+                  onChange={() => setOrientation(orient)}
+                  className="mr-2"
+                />
+                <label htmlFor={`orientation-${orient}`} className="capitalize">
+                  {orient}
+                </label>
+              </div>
+            ))}
+          </div>
+        </fieldset>
+      </div>
+
+      {/* Custom Size Inputs with Animated Transition */}
+      <AnimatePresence>
+        {sizeOption === "custom" && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 overflow-hidden"
+          >
+            <div className="space-y-2">
+              <label htmlFor="width" className="block font-medium ">
+                Canvas Width (mm)
+              </label>
+              <input
+                id="width"
+                name="width"
+                type="number"
+                min="0"
+                value={dimensions.width || ""}
+                onChange={handleDimensionChange}
+                className="border border-gray-300 rounded-md px-3 py-2 w-full text-black"
+                aria-required="true"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="height" className="block font-medium">
+                Canvas Height (mm)
+              </label>
+              <input
+                id="height"
+                name="height"
+                type="number"
+                min="0"
+                value={dimensions.height || ""}
+                onChange={handleDimensionChange}
+                className="border border-gray-300 rounded-md px-3 py-2 w-full text-black"
+                aria-required="true"
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cell Size Input */}
+      <div className="space-y-2">
+        <label htmlFor="cellSize" className="block font-medium">
+          Grid Cell Size (mm)
+        </label>
+        <input
+          id="cellSize"
+          name="cellSize"
+          type="number"
+          min="0"
+          value={dimensions.cellSize || ""}
+          onChange={handleDimensionChange}
+          className="border border-gray-300 rounded-md px-3 py-2 w-full text-black"
+          aria-describedby="cellSize-hint"
+        />
+        <p id="cellSize-hint" className="text-sm text-gray-500">
+          Define the size of each grid cell in millimeters
+        </p>
       </div>
 
       {/* Image Upload Input */}
@@ -262,18 +353,20 @@ const GridMaker: React.FC = () => {
           accept="image/*"
           onChange={handleImageUpload}
           className={`border border-gray-300 rounded-md px-3 py-2 w-full ${
-            isDimensionsValid ? "" : "cursor-not-allowed opacity-50"
+            canvasType === "predefined" || isDimensionsValid
+              ? ""
+              : "cursor-not-allowed opacity-50"
           }`}
-          disabled={!isDimensionsValid}
+          disabled={canvasType === "custom" && !isDimensionsValid}
         />
-        {!isDimensionsValid && (
-          <p className="text-sm text-">
+        {canvasType === "custom" && !isDimensionsValid && (
+          <p className="text-sm text-stone-500">
             Please set valid dimensions before uploading an image.
           </p>
         )}
       </div>
 
-      <div className="h-[500px] border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center">
+      <div className="h-[500px] border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center space-y-4">
         {imageFile ? (
           <div className="w-full h-full flex items-center justify-center">
             <canvas
@@ -287,41 +380,81 @@ const GridMaker: React.FC = () => {
       </div>
 
       {/* Grid customization */}
-      <div className="flex space-x-4">
-        <div className="flex items-center space-x-2">
-          <label htmlFor="gridColor" className="font-medium">
-            Grid Color
-          </label>
+      <div className="flex flex-wrap items-center gap-4 p-4 bg-black text-white rounded-lg">
+        {/* Grid Color Picker */}
+        <div className="flex items-center gap-2">
           <input
             id="gridColor"
             type="color"
             value={gridColor}
             onChange={(e) => setGridColor(e.target.value)}
-            className="w-16"
+            className="w-5 h-5 rounded-md border-none outline-none"
           />
+          <label htmlFor="gridColor" className="font-medium">
+            Grid Color
+          </label>
         </div>
 
-        <div className="flex items-center space-x-2">
+        {/* Show Grid Labels Toggle */}
+        <div className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={showGridLabels}
             onChange={() => setShowGridLabels((prev) => !prev)}
             id="gridLabels"
-            className="mr-2"
+            className="w-5 h-5 bg-gray-800 accent-white"
           />
-          <label htmlFor="gridLabels">Show Grid Labels</label>
+          <label htmlFor="gridLabels" className="font-medium cursor-pointer">
+            Show Grid Labels
+          </label>
         </div>
 
-        <div className="flex items-center space-x-2">
+        {/* Show Diagonal Lines Toggle */}
+        <div className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={showDiagonalLines}
             onChange={() => setShowDiagonalLines((prev) => !prev)}
             id="diagonalLines"
-            className="mr-2"
+            className="w-5 h-5 bg-gray-800 accent-white"
           />
-          <label htmlFor="diagonalLines">Show Diagonal Lines</label>
+          <label htmlFor="diagonalLines" className="font-medium cursor-pointer">
+            Show Diagonal Lines
+          </label>
         </div>
+
+        {/* Save Button */}
+        {imageFile && (
+          <button
+            onClick={() => {
+              if (canvasRef.current) {
+                const canvas = canvasRef.current as HTMLCanvasElement;
+                const link = document.createElement("a");
+                link.download = "canvas-image.png";
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+              }
+            }}
+            className="flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-all duration-150"
+          >
+            Save
+            {/* Download Icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 16V4m0 12l-4-4m4 4l4-4m-6 6h8"
+              />
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* Cropping modal */}

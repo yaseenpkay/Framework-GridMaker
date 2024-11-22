@@ -128,8 +128,8 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4 sm:p-8">
-      <div className="bg-gray-800 text-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden grid grid-cols-1 sm:grid-cols-2 sm:max-h-none">
+    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4 sm:p-8 m-0">
+      <div className="bg-gray-800 text-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col sm:grid sm:grid-cols-2">
         {/* Preview Section */}
         <div className="flex flex-col items-center p-6 space-y-4 border-b sm:border-b-0 sm:border-r border-gray-700">
           <h3 className="text-xl font-bold text-blue-400">Preview</h3>
@@ -142,11 +142,14 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
               ref={cropperRef}
             />
           </div>
+          <p className="text-sm text-stone-400">Scroll to zoom in and out</p>
         </div>
 
         {/* Adjustments Section */}
-        <div className="p-6 space-y-8 overflow-y-auto sm:max-h-[90vh]">
-          <h3 className="text-xl font-bold text-blue-400">Adjustments</h3>
+        <div className="p-6 space-y-8 overflow-y-auto max-h-[500px] sm:max-h-[90vh]">
+          <h3 className="text-xl font-bold text-blue-400 sticky top-0 bg-gray-800 z-10 pb-2">
+            Adjustments
+          </h3>
 
           {/* Brightness, Saturation, Contrast Sliders */}
           {[
@@ -197,7 +200,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-between mt-6 space-x-4">
+          <div className="flex justify-between mt-6 space-x-4 sticky bottom-0 bg-gray-800 pt-4">
             <button
               onClick={onClose}
               className="flex-1 py-3 px-5 bg-red-600 hover:bg-red-500 rounded-lg transition-all font-medium"
