@@ -29,9 +29,9 @@ const PREDEFINED_SIZES = {
 } as const;
 
 const GridMaker: React.FC = () => {
-  const [canvasType, _setCanvasType] = useState<"predefined" | "custom">(
-    "custom"
-  );
+  // const [canvasType, setCanvasType] = useState<"predefined" | "custom">(
+  //   "custom"
+  // );
 
   const [dimensions, setDimensions] = useState<Dimensions>({
     width: 0,
@@ -353,13 +353,11 @@ const GridMaker: React.FC = () => {
           accept="image/*"
           onChange={handleImageUpload}
           className={`border border-gray-300 rounded-md px-3 py-2 w-full ${
-            canvasType === "predefined" || isDimensionsValid
-              ? ""
-              : "cursor-not-allowed opacity-50"
+            isDimensionsValid ? "" : "cursor-not-allowed opacity-50"
           }`}
-          disabled={canvasType === "custom" && !isDimensionsValid}
+          disabled={!isDimensionsValid}
         />
-        {canvasType === "custom" && !isDimensionsValid && (
+        {!isDimensionsValid && (
           <p className="text-sm text-stone-500">
             Please set valid dimensions before uploading an image.
           </p>
