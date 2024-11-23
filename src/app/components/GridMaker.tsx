@@ -226,10 +226,10 @@ const GridMaker: React.FC = () => {
     dimensions.width > 0 && dimensions.height > 0 && dimensions.cellSize > 0;
 
   return (
-    <div className="container mx-auto px-4 py-8 ">
-      <div className="flex items-center mb-4">
-        <img src="/Logo.png" alt="Logo" className="h-8 w-7" />
-        <h1 className="text-2xl font-bold ml-2">Framework</h1>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex items-center mb-8">
+        <img src="/Logo.png" alt="Logo" className="h-13 w-12" />
+        <h1 className="text-4xl font-bold ml-4">Framework</h1>
       </div>
 
       <div className="space-y-6">
