@@ -4,13 +4,11 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-black text-gray-200 font-sans">
       {/* Header */}
-      <header className="py-4 px-6 shadow-md bg-opacity-90 bg-black sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between">
-          <div className="flex items-center mb-1 md:mb-0">
-            <img src="/Logo.png" alt="Logo" className="h-12 w-11" />
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold ml-4">
-              Framework
-            </h1>
+      <header className="py-2 px-4 shadow-md bg-opacity-90 bg-black sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center">
+            <img src="/Logo.png" alt="Logo" className="h-7 w-6" />
+            <h1 className="text-xl sm:text-2xl font-bold ml-2">Framework</h1>
           </div>
         </div>
       </header>
