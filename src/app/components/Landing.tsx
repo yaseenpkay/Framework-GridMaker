@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-gray-800 text-gray-200 font-sans">
+    <div className="min-h-screen bg-black text-gray-200 font-sans">
       {/* Header */}
       <header className="py-4 px-6 shadow-md bg-opacity-90 bg-black sticky top-0 z-50">
         <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between">
