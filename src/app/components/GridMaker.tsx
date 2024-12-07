@@ -181,9 +181,9 @@ const GridMaker: React.FC = () => {
       const baseSize = PREDEFINED_SIZES[sizeOption];
 
       const width =
-        orientation === "landscape" ? baseSize.height : baseSize.width;
+        orientation === "portrait" ? baseSize.height : baseSize.width;
       const height =
-        orientation === "landscape" ? baseSize.width : baseSize.height;
+        orientation === "portrait" ? baseSize.width : baseSize.height;
 
       setDimensions((prev) => ({
         ...prev,
