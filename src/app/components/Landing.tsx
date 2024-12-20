@@ -214,15 +214,15 @@ export default function Landing() {
                 {[
                   {
                     step: "01",
-                    title: "Upload Your Image",
-                    description:
-                      "Start by uploading the image you want to work with. Our platform supports various image formats including JPG, PNG, and SVG files for maximum compatibility.",
-                  },
-                  {
-                    step: "02",
                     title: "Configure Grid",
                     description:
                       "Set your desired grid dimensions and customize the layout. Adjust columns, rows, spacing, and other parameters to match your specific requirements.",
+                  },
+                  {
+                    step: "02",
+                    title: "Upload Your Image",
+                    description:
+                      "Start by uploading the image you want to work with. Our platform supports various image formats including JPG, PNG, and SVG files for maximum compatibility.",
                   },
                   {
                     step: "03",
