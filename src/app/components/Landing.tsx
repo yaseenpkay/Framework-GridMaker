@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { ChevronRight, Grid, Image as ImageIcon, Zap } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 // Animation variants
 const fadeInUp = {
@@ -286,7 +287,7 @@ export default function Landing() {
                   variants={scaleUp}
                   whileHover={{ scale: 1.02 }}
                 >
-                  <img
+                  <Image
                     src="/about.png"
                     alt="Framework in action"
                     className="w-90 h-full object-cover opacity-70"
