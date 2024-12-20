@@ -62,7 +62,7 @@ export default function Landing() {
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <img src="/Logo.png" alt="Logo" className="h-12 w-11" />
+              <img src="/Logo.png" alt="Logo" className="h-8" />
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold ml-4">
                 Framework
               </h1>
