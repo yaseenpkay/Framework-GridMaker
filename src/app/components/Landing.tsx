@@ -280,11 +280,6 @@ export default function Landing() {
                     features with an intuitive interface, making
                     professional-grade grid creation accessible to everyone.
                   </p>
-                  <p className="text-gray-400 text-lg">
-                    Whether you are a professional artist or just getting
-                    started, Framework provides the tools you need to bring your
-                    vision to life.
-                  </p>
                 </motion.div>
                 <motion.div
                   className="rounded-xl overflow-hidden shadow-2xl"
