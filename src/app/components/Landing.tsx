@@ -281,7 +281,7 @@ export default function Landing() {
                     professional-grade grid creation accessible to everyone.
                   </p>
                   <p className="text-gray-400 text-lg">
-                    Whether you're a professional artist or just getting
+                    Whether you are a professional artist or just getting
                     started, Framework provides the tools you need to bring your
                     vision to life.
                   </p>
@@ -294,7 +294,7 @@ export default function Landing() {
                   <img
                     src="/about.png"
                     alt="Framework in action"
-                    className="w-90 h-full object-cover"
+                    className="w-90 h-full object-cover opacity-70"
                   />
                 </motion.div>
               </div>

@@ -227,11 +227,6 @@ const GridMaker: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* <div className="flex items-center mb-8">
-        <img src="/Logo.png" alt="Logo" className="h-13 w-12" />
-        <h1 className="text-4xl font-bold ml-4">Framework</h1>
-      </div> */}
-
       <div className="space-y-6">
         {/* Canvas Type Selection */}
         <div className="space-y-4  border-2 border-dashed border-gray-200 rounded-lg p-5">
